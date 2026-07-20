@@ -76,7 +76,7 @@ export default function Privacy() {
 
             <h2 className="text-lg font-bold text-foreground mt-8">7. Your Choices & Rights</h2>
             <p>
-              You can ask us to delete your email from our pre-launch waitlist database at any time. Simply send an email containing your request to <a href="mailto:hello@campusiyo.com" className="text-primary hover:underline">hello@campusiyo.com</a>.
+              You can ask us to delete your email from our pre-launch waitlist database at any time. Simply send an email containing your request to <a href="mailto:hello@campusiyo.in" className="text-primary hover:underline">hello@campusiyo.in</a>.
             </p>
 
             <h2 className="text-lg font-bold text-foreground mt-8">8. Changes to This Policy</h2>
@@ -88,7 +88,7 @@ export default function Privacy() {
             <p>
               If you have any questions or feedback regarding this privacy document, contact us at:
               <br />
-              <strong>Email:</strong> hello@campusiyo.com
+              <strong>Email:</strong> hello@campusiyo.in
             </p>
           </div>
         </div>

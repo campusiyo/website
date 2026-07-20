@@ -59,11 +59,11 @@ export default function Home() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Campusiyo",
-    "url": "https://campusiyo.com",
+    "url": "https://campusiyo.in",
     "description": "Get access to organized, peer-reviewed, university-wise and semester-wise study notes.",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://campusiyo.com/search?q={search_term_string}",
+      "target": "https://campusiyo.in/search?q={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   };

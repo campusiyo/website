@@ -71,7 +71,7 @@ export default function Terms() {
             <p>
               If you wish to review, update, or ask questions about these Terms, contact us:
               <br />
-              <strong>Email:</strong> hello@campusiyo.com
+              <strong>Email:</strong> hello@campusiyo.in
             </p>
           </div>
         </div>

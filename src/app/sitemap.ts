@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://campusiyo.com";
+  const baseUrl = "https://campusiyo.in";
   const routes = ["", "/about", "/features", "/contact", "/privacy", "/terms"];
 
   return routes.map((route) => ({

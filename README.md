@@ -121,12 +121,12 @@ We recommend deploying this project on **Vercel** or **Netlify** since it is bui
 
 ## 🔗 Linking Your Custom Domain
 
-Once your site is hosted on Vercel or Netlify, you can link your custom domain name (e.g., `campusiyo.com` or `waitlist.campusiyo.com`).
+Once your site is hosted on Vercel or Netlify, you can link your custom domain name (e.g., `campusiyo.in` or `waitlist.campusiyo.in`).
 
 ### 1. Configure Domain in hosting dashboard (Vercel example):
 * Go to your project page in Vercel.
 * Click **Settings** > **Domains**.
-* Enter your domain name (e.g., `campusiyo.com` or `www.campusiyo.com`) and click **Add**.
+* Enter your domain name (e.g., `campusiyo.in` or `www.campusiyo.in`) and click **Add**.
 * Vercel will analyze your domain and display the required DNS records (A record, CNAME record, or TXT record).
 
 ### 2. Update DNS records at your registrar:

@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/coming-soon"],
     },
-    sitemap: "https://campusiyo.com/sitemap.xml",
+    sitemap: "https://campusiyo.in/sitemap.xml",
   };
 }

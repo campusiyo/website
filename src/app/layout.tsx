@@ -26,11 +26,11 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Campusiyo Team" }],
   creator: "Campusiyo",
-  metadataBase: new URL("https://campusiyo.com"),
+  metadataBase: new URL("https://campusiyo.in"),
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://campusiyo.com",
+    url: "https://campusiyo.in",
     title: "Campusiyo | Find Organized University Study Notes",
     description:
       "Get access to organized, peer-reviewed, university-wise and semester-wise study notes. Ace your exams with Campusiyo.",

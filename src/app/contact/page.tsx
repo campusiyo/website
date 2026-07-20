@@ -79,8 +79,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className="font-bold text-foreground text-sm">General Inquiries</h4>
-                    <a href="mailto:hello@campusiyo.com" className="text-xs sm:text-sm text-primary hover:underline">
-                      hello@campusiyo.com
+                    <a href="mailto:hello@campusiyo.in" className="text-xs sm:text-sm text-primary hover:underline">
+                      hello@campusiyo.in
                     </a>
                   </div>
                 </div>
