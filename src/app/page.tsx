@@ -55,17 +55,20 @@ const POPULAR_SUBJECTS = [
 
 export default function Home() {
   // Structured Data Schema
-  const jsonLd = {
+  const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Campusiyo",
-    "url": "https://campusiyo.in",
-    "description": "Get access to organized, peer-reviewed, university-wise and semester-wise study notes.",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://campusiyo.in/search?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
+    name: "Campusiyo",
+    alternateName: "Campusiyo",
+    url: "https://campusiyo.in",
+  };
+
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Campusiyo",
+    url: "https://campusiyo.in",
+    logo: "https://campusiyo.in/icon.png",
   };
 
   return (
@@ -73,7 +76,11 @@ export default function Home() {
       {/* Schema Injection */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
       />
 
       <Navbar />
