@@ -15,6 +15,11 @@ export const metadata: Metadata = {
   },
   description:
     "Get access to organized, peer-reviewed, university-wise and semester-wise study notes. Ace your exams with Campusiyo.",
+
+  verification: {
+    google: "QHr6G2FEItujyjrSoZirsfOfBqQQJwA8CxgcTPntk7I",
+  },
+
   keywords: [
     "Campusiyo",
     "university notes",
