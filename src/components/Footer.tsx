@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
@@ -68,9 +69,13 @@ export default function Footer() {
           {/* Logo & Pitch */}
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-2">
-              <span className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-lg">
-                C
-              </span>
+              <Image
+                src="/logo.png"
+                alt="Campusiyo Logo"
+                width={32}
+                height={32}
+                className="h-8 w-8 object-contain"
+              />
               <span className="font-bold text-xl tracking-tight text-foreground">
                 Campusiyo
               </span>

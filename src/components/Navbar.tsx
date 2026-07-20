@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -44,9 +45,13 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2 group">
-              <span className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm transition-transform duration-300 group-hover:scale-105">
-                C
-              </span>
+              <Image
+                src="/logo.png"
+                alt="Campusiyo Logo"
+                width={32}
+                height={32}
+                className="h-8 w-8 object-contain transition-transform duration-300 group-hover:scale-105"
+              />
               <span className="font-bold text-xl tracking-tight text-foreground group-hover:text-primary transition-colors">
                 Campusiyo
               </span>
