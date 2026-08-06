@@ -17,6 +17,7 @@ export function AccordionItem({ question, answer }: AccordionItemProps) {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between text-left py-2 hover:text-primary transition-colors focus:outline-none focus:text-primary cursor-pointer group"
+        suppressHydrationWarning
       >
         <span className="text-base sm:text-lg font-medium text-foreground group-hover:text-primary transition-colors duration-200">
           {question}
@@ -52,7 +53,7 @@ interface AccordionProps {
 
 export function Accordion({ items }: AccordionProps) {
   return (
-    <div className="w-full border border-border-light rounded-xl bg-white px-6 py-2 shadow-sm">
+    <div className="w-full border border-border-light rounded-xl bg-card-bg px-6 py-2 shadow-sm">
       {items.map((item, index) => (
         <AccordionItem key={index} question={item.question} answer={item.answer} />
       ))}

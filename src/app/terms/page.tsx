@@ -14,7 +14,7 @@ export default function Terms() {
       <Navbar />
 
       <main className="flex-grow bg-background py-16 sm:py-24">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 bg-white border border-border-light rounded-2xl p-8 sm:p-12 shadow-sm">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 bg-card-bg border border-border-light rounded-2xl p-8 sm:p-12 shadow-sm">
           <h1 className="text-3xl font-bold tracking-tight text-foreground border-b border-border-light pb-6">
             Terms & Conditions
           </h1>

@@ -48,7 +48,7 @@ export default function Contact() {
 
       <main className="flex-grow">
         {/* Intro */}
-        <section className="bg-white border-b border-border-light py-16 sm:py-24">
+        <section className="bg-card-bg border-b border-border-light py-16 sm:py-24">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
               Contact Us
@@ -144,7 +144,7 @@ export default function Contact() {
             </div>
 
             {/* Form Column (Col-span-7) */}
-            <div className="lg:col-span-7 bg-white border border-border-light rounded-2xl p-6 sm:p-8 shadow-sm">
+            <div className="lg:col-span-7 bg-card-bg border border-border-light rounded-2xl p-6 sm:p-8 shadow-sm">
               <h3 className="text-lg font-bold text-foreground mb-6">Send a Message</h3>
               
               {status === "success" ? (

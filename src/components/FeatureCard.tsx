@@ -13,7 +13,7 @@ export default function FeatureCard({ iconName, title, description, isComingSoon
   const IconComponent = LucideIcons[iconName] as React.ComponentType<{ className?: string }>;
 
   return (
-    <div className="group relative flex flex-col p-6 sm:p-8 bg-white border border-border-light rounded-xl hover:border-primary/20 hover:shadow-md transition-all duration-300">
+    <div className="group relative flex flex-col p-6 sm:p-8 bg-card-bg border border-border-light rounded-xl hover:border-primary/20 hover:shadow-md transition-all duration-300">
       {/* Icon frame */}
       <div className="flex items-center justify-between">
         <div className="p-3 bg-primary/5 text-primary rounded-lg group-hover:bg-primary group-hover:text-white transition-all duration-300">

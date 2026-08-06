@@ -9,7 +9,13 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Roadmap & Features",
-  description: "Explore the core features of Campusiyo and our pre-launch roadmap, including upcoming AI summaries, practice quizzes, and organized exam preparation tools.",
+  description: "Explore the core features of Campusiyo and our roadmap, including upcoming AI summaries, practice quizzes, and organized exam preparation tools for university students.",
+  alternates: { canonical: "https://campusiyo.in/features" },
+  openGraph: {
+    title: "Roadmap & Features | Campusiyo",
+    description: "Discover what Campusiyo offers today and what's coming — AI summaries, quizzes, and more.",
+    url: "https://campusiyo.in/features",
+  },
 };
 
 const LAUNCH_FEATURES = [
@@ -73,7 +79,7 @@ export default function Features() {
 
       <main className="flex-grow">
         {/* Page Hero */}
-        <section className="bg-white border-b border-border-light py-20 sm:py-28">
+        <section className="bg-card-bg border-b border-border-light py-20 sm:py-28">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
               Features & Roadmap
@@ -109,7 +115,7 @@ export default function Features() {
         </section>
 
         {/* Coming Soon Features */}
-        <section className="bg-white border-y border-border-light py-20 sm:py-24">
+        <section className="bg-card-bg border-y border-border-light py-20 sm:py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mb-12 sm:mb-16">
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-accent-green/10 text-accent-green text-xs font-semibold mb-4 border border-accent-green/20">

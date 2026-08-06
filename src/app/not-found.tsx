@@ -2,8 +2,15 @@ import React from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { FileQuestion, ArrowLeft, Home } from "lucide-react";
+import { FileQuestion, Home } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Page Not Found",
+  description: "The page you are looking for does not exist on Campusiyo. Browse our course directory or return to the homepage.",
+  robots: { index: false, follow: false },
+};
 
 export default function NotFound() {
   return (

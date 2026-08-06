@@ -6,7 +6,14 @@ import Image from "next/image";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
-export default function Footer() {
+import { LayoutContext } from "@/context/LayoutContext";
+
+export default function Footer({ isLayout }: { isLayout?: boolean }) {
+  const { isLayoutActive } = React.useContext(LayoutContext);
+  
+  if (isLayoutActive && !isLayout) {
+    return null;
+  }
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
 
@@ -20,62 +27,31 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-white border-t border-border-light">
+    <footer className="bg-card-bg border-t border-border-light">
       {/* Newsletter Panel */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-b border-border-light">
-        <div className="lg:flex lg:items-center lg:justify-between bg-primary/5 rounded-2xl p-8 sm:p-12 gap-8">
-          <div className="max-w-xl">
-            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-              Stay ahead. Get notified about notes release.
-            </h3>
-            <p className="mt-2 text-sm sm:text-base text-secondary-gray">
-              We send updates only when notes for new semesters and universities are uploaded. No spam, ever.
-            </p>
-          </div>
-          <div className="mt-8 lg:mt-0 lg:ml-8 w-full max-w-md">
-            {status === "success" ? (
-              <div className="flex items-center gap-2 text-accent-green font-medium">
-                <CheckCircle2 className="h-5 w-5" />
-                <span>Subscribed successfully! Thank you.</span>
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className="w-full px-4 py-3 bg-white border border-border-light rounded-lg text-foreground placeholder:text-foreground/45 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                  disabled={status === "loading"}
-                  required
-                />
-                <Button
-                  type="submit"
-                  variant="primary"
-                  isLoading={status === "loading"}
-                  className="whitespace-nowrap sm:w-auto"
-                >
-                  Subscribe
-                </Button>
-              </form>
-            )}
-          </div>
-        </div>
-      </div>
 
       {/* Main Footer Links */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:py-16 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo & Pitch */}
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-2">
-              <Image
-                src="/logo.png"
-                alt="Campusiyo Logo"
-                width={32}
-                height={32}
-                className="h-8 w-8 object-contain"
-              />
+              <div className="relative h-8 w-8">
+                <Image
+                  src="/campusiyo-light-logo.png"
+                  alt="Campusiyo - University Study Notes Portal (Light Logo)"
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 object-contain dark:hidden"
+                />
+                <Image
+                  src="/campusiyo-dark-logo.png"
+                  alt="Campusiyo - University Study Notes Portal (Dark Logo)"
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 object-contain hidden dark:block"
+                />
+              </div>
               <span className="font-bold text-xl tracking-tight text-foreground">
                 Campusiyo
               </span>
@@ -105,14 +81,40 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="#"
+                href="https://www.linkedin.com/company/campusiyo/about/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-secondary-gray hover:text-primary transition-colors"
-                aria-label="LinkedIn Link"
+                aria-label="Campusiyo on LinkedIn"
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
                   <rect x="2" y="9" width="4" height="12" />
                   <circle cx="4" cy="4" r="2" />
+                </svg>
+              </a>
+              <a
+                href="https://www.instagram.com/campusiyo/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-secondary-gray hover:text-primary transition-colors"
+                aria-label="Campusiyo on Instagram"
+              >
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+              </a>
+              <a
+                href="https://www.facebook.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-secondary-gray hover:text-primary transition-colors"
+                aria-label="Campusiyo on Facebook"
+              >
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
                 </svg>
               </a>
             </div>
@@ -199,10 +201,48 @@ export default function Footer() {
               </li>
             </ul>
           </div>
+
+          {/* Contact */}
+          <div>
+            <h4 className="text-sm font-semibold text-foreground tracking-wider uppercase mb-4">
+              Contact
+            </h4>
+            <ul className="space-y-2.5">
+              <li>
+                <a
+                  href="mailto:campusiyo.official@gmail.com"
+                  className="text-sm text-secondary-gray hover:text-primary transition-colors"
+                  aria-label="Email Campusiyo"
+                >
+                  campusiyo.official@gmail.com
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.instagram.com/campusiyo/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-secondary-gray hover:text-primary transition-colors"
+                >
+                  Instagram
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.linkedin.com/company/campusiyo/about/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-secondary-gray hover:text-primary transition-colors"
+                >
+                  LinkedIn
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* Bottom copyright banner */}
-        <div className="mt-12 pt-8 border-t border-border-light flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-8 sm:mt-12 pt-8 border-t border-border-light flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-secondary-gray">
             &copy; {new Date().getFullYear()} Campusiyo. All rights reserved.
           </p>

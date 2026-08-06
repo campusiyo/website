@@ -48,7 +48,7 @@ export default function WaitlistForm() {
 
   if (status === "success") {
     return (
-      <div className="flex flex-col items-center justify-center p-6 bg-white border border-accent-green/20 rounded-xl max-w-md mx-auto shadow-sm text-center">
+      <div className="flex flex-col items-center justify-center p-6 bg-card-bg border border-accent-green/20 rounded-xl max-w-md mx-auto shadow-sm text-center">
         <CheckCircle2 className="h-10 w-10 text-accent-green mb-3" />
         <h3 className="text-lg font-semibold text-foreground">You&apos;re on the list!</h3>
         <p className="text-sm text-secondary-gray mt-1">
@@ -70,9 +70,10 @@ export default function WaitlistForm() {
               if (status === "error") setStatus("idle");
             }}
             placeholder="Enter your student email..."
-            className="w-full px-4 py-3 bg-white border border-border-light rounded-lg text-foreground placeholder:text-foreground/40 outline-none transition-all focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm sm:text-base"
+            className="w-full px-4 py-3 bg-card-bg border border-border-light rounded-lg text-foreground placeholder:text-foreground/40 outline-none transition-all focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm sm:text-base"
             disabled={status === "loading"}
             required
+            suppressHydrationWarning
           />
         </div>
         <Button

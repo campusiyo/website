@@ -31,7 +31,7 @@ export default function ComingSoon() {
             Our notes dashboards, upload portals, and AI revision summarizers are currently in private alpha. Join the waitlist to be invited when we deploy.
           </p>
 
-          <div className="mt-10 bg-white border border-border-light rounded-2xl p-6 sm:p-8 shadow-sm">
+          <div className="mt-10 bg-card-bg border border-border-light rounded-2xl p-6 sm:p-8 shadow-sm">
             <h3 className="text-base font-bold text-foreground mb-4">
               Get notified when this feature is ready
             </h3>

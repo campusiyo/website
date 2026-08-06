@@ -9,23 +9,23 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = "", variant = "primary", size = "md", isLoading, children, disabled, ...props }, ref) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer";
+      "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer tracking-tight";
 
     const variants = {
       primary:
-        "bg-primary text-white hover:bg-primary-hover focus:ring-primary/50 shadow-sm",
+        "bg-primary text-white hover:bg-primary-hover focus:ring-primary/50 shadow-sm border border-primary/20",
       secondary:
-        "bg-white border border-border-light text-foreground hover:bg-gray-50 focus:ring-gray-200",
+        "bg-card-bg border border-border-light text-foreground hover:bg-gray-50 dark:hover:bg-hover-card-bg focus:ring-gray-200 shadow-sm",
       outline:
         "bg-transparent border border-foreground/15 text-foreground hover:bg-foreground/[0.03] focus:ring-foreground/10",
       accent:
-        "bg-accent-green text-white hover:bg-accent-green-hover focus:ring-accent-green/50 shadow-sm",
+        "bg-accent-green text-white hover:bg-accent-green-hover focus:ring-accent-green/50 shadow-sm border border-accent-green/20",
     };
 
     const sizes = {
-      sm: "px-3 py-1.5 text-sm",
-      md: "px-5 py-2.5 text-base",
-      lg: "px-6 py-3 text-lg",
+      sm: "px-2.5 py-1.5 text-xs",
+      md: "px-3.5 py-2 text-sm",
+      lg: "px-4.5 py-2.5 text-sm",
     };
 
     return (
@@ -33,6 +33,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+        suppressHydrationWarning
         {...props}
       >
         {isLoading && (

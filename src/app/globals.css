@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #FAFAFA;
   --foreground: #111827;
@@ -12,6 +14,28 @@
   
   --border-light: #E5E7EB;
   --card-bg: #FFFFFF;
+  --navbar-bg: #FFFFFF;
+  --hover-card-bg: #F3F4F6;
+  --muted-text: #6B7280;
+  --sidebar-bg: #F9FAFB;
+}
+
+.dark {
+  --background: #13151C;
+  --foreground: #F3F4F6;
+  
+  --primary: #00A16C;
+  --primary-hover: #00B97A;
+  --secondary-gray: #B3B7C2;
+  --accent-green: #00A16C;
+  --accent-green-hover: #00B97A;
+  
+  --border-light: #262B36;
+  --card-bg: #181C24;
+  --navbar-bg: #181B24;
+  --hover-card-bg: #202532;
+  --muted-text: #7B8395;
+  --sidebar-bg: #101218;
 }
 
 @theme {
@@ -25,6 +49,10 @@
   --color-accent-green-hover: var(--accent-green-hover);
   --color-border-light: var(--border-light);
   --color-card-bg: var(--card-bg);
+  --color-navbar-bg: var(--navbar-bg);
+  --color-hover-card-bg: var(--hover-card-bg);
+  --color-muted-text: var(--muted-text);
+  --color-sidebar-bg: var(--sidebar-bg);
 }
 
 body {
@@ -33,3 +61,55 @@ body {
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
+/* ====================================================
+   PREMIUM SaaS DESIGN SYSTEM OVERRIDES
+   ==================================================== */
+
+/* Standardize border radius globally (Vercel/Linear standard) */
+.rounded-2xl {
+  border-radius: 0.75rem !important; /* Subtle 12px corners */
+}
+.rounded-3xl {
+  border-radius: 1rem !important; /* 16px corners */
+}
+
+/* Standardize form elements (Inputs, Selects, Textareas) */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+select,
+textarea {
+  font-size: 0.875rem !important; /* 14px text-sm */
+  line-height: 1.25rem !important;
+  border-radius: 0.5rem !important; /* 8px rounded-lg */
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  transition: all 0.2s ease-in-out !important;
+}
+
+/* Interactive tables polish */
+table {
+  border-collapse: collapse !important;
+  table-layout: fixed !important;
+}
+th {
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  color: var(--secondary-gray) !important;
+}
+tr {
+  transition: background-color 0.15s ease-in-out !important;
+}
+
+/* Focus and hover outline refinements */
+a, button, select, input, textarea {
+  outline: none !important;
+}
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+  ring: 2px !important;
+  ring-offset: 2px !important;
+  ring-color: var(--primary) !important;
+}
