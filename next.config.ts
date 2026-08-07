@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next';
 
 // Backend URL — override via BACKEND_URL env var in production
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+const BACKEND_URL = process.env.BACKEND_URL || "https://api.campusiyo.in";
 
 const nextConfig: NextConfig = {
 
