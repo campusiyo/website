@@ -23,26 +23,80 @@ const nextConfig: NextConfig = {
 
   // ── API Rewrites (Next.js → Spring Boot) ─────────────────────────────────
   async rewrites() {
-    return [
+  return [
+      //testing ke liye
       {
-        source: '/api/notes/:path*',
+        source: "/test",
+        destination: "https://httpbin.org/anything",
+      },
+      // Notes
+      {
+        source: "/api/notes",
+        destination: `${BACKEND_URL}/notes`,
+      },
+      {
+        source: "/api/notes/:path*",
         destination: `${BACKEND_URL}/notes/:path*`,
       },
+
+      // Courses
       {
-        source: '/api/courses/:path*',
+        source: "/api/courses",
+        destination: `${BACKEND_URL}/courses`,
+      },
+      {
+        source: "/api/courses/:path*",
         destination: `${BACKEND_URL}/courses/:path*`,
       },
+
+      // Auth
       {
-        source: '/api/auth/:path*',
+        source: "/api/auth",
+        destination: `${BACKEND_URL}/auth`,
+      },
+      {
+        source: "/api/auth/:path*",
         destination: `${BACKEND_URL}/auth/:path*`,
       },
+
+      // Users
       {
-        source: '/api/users/:path*',
-        destination: `${BACKEND_URL}/users/:path*`,
+        source: "/api/users",
+        destination: `${BACKEND_URL}/users`,
       },
       {
-        source: '/api/api/v1/:path*',
+        source: "/api/users/:path*",
+        destination: `${BACKEND_URL}/users/:path*`,
+      },
+
+      // API v1
+      {
+        source: "/api/api/v1",
+        destination: `${BACKEND_URL}/api/v1`,
+      },
+      {
+        source: "/api/api/v1/:path*",
         destination: `${BACKEND_URL}/api/v1/:path*`,
+      },
+
+      // Admin
+      {
+        source: "/api/admin",
+        destination: `${BACKEND_URL}/admin`,
+      },
+      {
+        source: "/api/admin/:path*",
+        destination: `${BACKEND_URL}/admin/:path*`,
+      },
+
+      // User
+      {
+        source: "/api/user",
+        destination: `${BACKEND_URL}/user`,
+      },
+      {
+        source: "/api/user/:path*",
+        destination: `${BACKEND_URL}/user/:path*`,
       },
     ];
   },
