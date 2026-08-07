@@ -39,8 +39,14 @@ function LoginForm() {
   const initializeGoogleSignIn = () => {
     if (typeof window !== "undefined" && window.google && !googleInitialized) {
       try {
-        const clientID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "your-google-client-id.apps.googleusercontent.com";
-        
+        const clientID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+
+          console.log("CLIENT ID =", clientID);
+
+          if (!clientID) {
+            throw new Error("NEXT_PUBLIC_GOOGLE_CLIENT_ID is missing");
+          }
+          
         window.google.accounts.id.initialize({
           client_id: clientID,
           callback: async (response: any) => {
