@@ -303,19 +303,6 @@ export default function Home() {
                 )}
               </div>
             </div>
-
-            {/* Direct Android APK Download Button */}
-            <div className="pt-1 sm:pt-2 flex justify-center">
-              <a
-                href="/Campusiyo.apk"
-                download="Campusiyo.apk"
-                className="inline-flex flex-wrap items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-full bg-card-bg/90 border border-border-light hover:border-primary/40 text-xs font-semibold text-foreground hover:text-primary shadow-xs transition-all cursor-pointer group max-w-full text-center"
-              >
-                <Smartphone className="h-4 w-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
-                <span>Campusiyo Android App (.APK)</span>
-                <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0">Target SDK 35</span>
-              </a>
-            </div>
           </div>
         </section>
 

@@ -4,6 +4,7 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ApkDownloadModal from "@/components/ApkDownloadModal";
 
 import { LayoutContext } from "@/context/LayoutContext";
 
@@ -21,6 +22,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
   return (
     <LayoutContext.Provider value={{ isLayoutActive: true }}>
+      <ApkDownloadModal />
       <Navbar isLayout={true} />
       <div className="flex-grow flex flex-col min-h-[calc(100vh-3.5rem)]">
         {children}

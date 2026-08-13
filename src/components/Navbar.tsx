@@ -97,11 +97,14 @@ export default function Navbar({ isLayout }: { isLayout?: boolean }) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     }
     return () => {
       document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     };
   }, [isOpen]);
 
@@ -287,17 +290,6 @@ export default function Navbar({ isLayout }: { isLayout?: boolean }) {
 
             {/* Desktop Action Items */}
             <div className="hidden md:flex items-center justify-end gap-3 shrink-0">
-              {/* Direct APK Download Button */}
-              <a
-                href="/Campusiyo.apk"
-                download="Campusiyo.apk"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white transition-all cursor-pointer shrink-0 shadow-xs"
-                title="Download Campusiyo Android App"
-              >
-                <Smartphone className="h-3.5 w-3.5" />
-                <span>Get App</span>
-              </a>
-
               {/* Theme Toggle Button */}
               <button
                 onClick={toggleTheme}
@@ -483,9 +475,9 @@ export default function Navbar({ isLayout }: { isLayout?: boolean }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
+                transition={{ duration: 0.2 }}
                 onClick={() => setIsOpen(false)}
-                className="fixed inset-0 bg-black/55 backdrop-blur-sm z-40 md:hidden"
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 md:hidden"
               />
 
               {/* Drawer Container */}
@@ -498,7 +490,7 @@ export default function Navbar({ isLayout }: { isLayout?: boolean }) {
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
-                className="fixed top-0 left-0 h-screen w-[85vw] min-w-[280px] max-w-[340px] bg-card-bg border-r border-border-light shadow-2xl z-50 md:hidden flex flex-col justify-between text-foreground select-none"
+                className="fixed inset-y-0 left-0 h-screen h-[100dvh] max-h-[100dvh] w-[85vw] min-w-[280px] max-w-[340px] bg-card-bg border-r border-border-light shadow-2xl z-[60] md:hidden flex flex-col justify-between text-foreground select-none overflow-y-auto"
               >
                 <div className="flex flex-col h-full overflow-y-auto">
                   {/* Drawer Header with App Info and Close Button */}
