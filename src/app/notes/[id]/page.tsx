@@ -3,7 +3,8 @@
 import React, { use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { api } from "@/utils/api";
+import { noteService } from "@/services/noteService";
+import RouteGuard from "@/guards/RouteGuard";
 import { ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import dynamic from "next/dynamic";
@@ -33,30 +34,25 @@ export default function NoteViewerPage({ params }: { params: Promise<{ id: strin
   const { id: noteId } = use(params);
   const router = useRouter();
   const { user, loading, initialized } = useAuth();
-  
+
   const [noteMeta, setNoteMeta] = useState<NoteDetails | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [viewerLoading, setViewerLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
+  const [error] = useState<string | null>(null);
+
   // Security screenshot prevention states
   const [isBlurred, setIsBlurred] = useState(false);
 
   useEffect(() => {
-    if (initialized && !loading) {
-      if (!user) {
-        router.push("/login");
-        return;
-      }
-
-      // 1. Set the relative streaming URL directly
-      setPdfUrl(`/api/notes/${noteId}/view`);
+    if (initialized && !loading && user) {
+      // 1. Set the relative streaming URL directly via noteService
+      setPdfUrl(noteService.getStreamUrl(noteId));
       setViewerLoading(false);
 
       // 2. Fetch metadata from general note list
       const loadMetadata = async () => {
         try {
-          const res = await api.get("/notes");
+          const res = await noteService.list();
           if (res.ok) {
             const list = await res.json();
             const note = list.find((n: NoteDetails) => n.id === noteId);
@@ -71,9 +67,7 @@ export default function NoteViewerPage({ params }: { params: Promise<{ id: strin
 
       loadMetadata();
     }
-
-    return () => {};
-  }, [user, loading, initialized, noteId, router]);
+  }, [user, loading, initialized, noteId]);
 
   // Window Focus / Blur & Visibility Change interception to block screenshots
   useEffect(() => {
@@ -95,7 +89,6 @@ export default function NoteViewerPage({ params }: { params: Promise<{ id: strin
     window.addEventListener("focus", handleFocus);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // Initial check in case window starts blurred
     if (typeof document !== "undefined" && !document.hasFocus()) {
       setIsBlurred(true);
     }
@@ -135,14 +128,16 @@ export default function NoteViewerPage({ params }: { params: Promise<{ id: strin
   }
 
   return (
-    <ReaderLayout
-      noteId={noteId}
-      pdfUrl={pdfUrl || ""}
-      documentTitle={noteMeta?.title || "Study Note"}
-      subjectBadge={noteMeta?.subjectName || noteMeta?.subject}
-      isBlurred={isBlurred}
-      user={user}
-      onBack={() => router.push("/notes")}
-    />
+    <RouteGuard access="USER" unauthenticated="redirect">
+      <ReaderLayout
+        noteId={noteId}
+        pdfUrl={pdfUrl || ""}
+        documentTitle={noteMeta?.title || "Study Note"}
+        subjectBadge={noteMeta?.subjectName || noteMeta?.subject}
+        isBlurred={isBlurred}
+        user={user}
+        onBack={() => router.push("/notes")}
+      />
+    </RouteGuard>
   );
 }

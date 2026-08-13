@@ -3,17 +3,19 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { Role } from "@/constants/roles";
+import RouteGuard from "@/guards/RouteGuard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { User, Mail, Shield, BookOpen, Layers, CheckCircle2, AlertCircle } from "lucide-react";
+import { User, Shield, CheckCircle2, AlertCircle } from "lucide-react";
 
 function ProfileForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading, initialized, updateProfile, refreshProfile } = useAuth();
-  
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [course, setCourse] = useState("");
@@ -24,17 +26,11 @@ function ProfileForm() {
   const [formLoading, setFormLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  
+
   const isInitMode = searchParams.get("init") === "true" || user?.hasNoProfile;
 
   useEffect(() => {
-    if (initialized && !loading) {
-      if (!user) {
-        router.push("/login");
-        return;
-      }
-
-      // Sync user data to state
+    if (initialized && !loading && user) {
       setFullName(user.fullName || "");
       setEmail(user.email || "");
       setCourse(user.course || "");
@@ -42,7 +38,7 @@ function ProfileForm() {
       setDesignation(user.designation || "");
       setProfilePictureUrl(user.profilePictureUrl || "");
     }
-  }, [user, loading, initialized, router]);
+  }, [user, loading, initialized]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,33 +53,32 @@ function ProfileForm() {
     }
 
     try {
-      const payload: any = {
+      const payload: Record<string, unknown> = {
         fullName: fullName.trim(),
         email: email.trim() || undefined,
         profilePictureUrl: profilePictureUrl.trim() || undefined,
       };
 
-      if (user?.role === "STUDENT") {
+      if (user?.role === Role.STUDENT) {
         payload.course = course.trim() || undefined;
         payload.semester = semester ? Number(semester) : undefined;
-      } else if (user?.role === "ADMIN") {
+      } else if (user?.role === Role.ADMIN) {
         payload.designation = designation.trim() || undefined;
       }
 
       await updateProfile(payload);
       setSuccessMsg("Your profile has been saved successfully.");
-      
-      // If initialized, let's refresh the details
+
       await refreshProfile();
 
-      // If user came here during registration, redirect to dashboard in 1.5s
       if (isInitMode) {
         setTimeout(() => {
           router.push("/dashboard");
         }, 1500);
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to update profile details.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to update profile details.";
+      setErrorMsg(message);
     } finally {
       setFormLoading(false);
     }
@@ -102,11 +97,11 @@ function ProfileForm() {
   }
 
   return (
-    <>
+    <RouteGuard access="USER" unauthenticated="redirect">
       <Navbar />
       <main className="flex-grow bg-background py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-xl mx-auto space-y-6">
-          
+
           {isInitMode && (
             <div className="bg-primary/5 border border-primary/20 text-primary p-5 rounded-2xl flex gap-3 text-sm">
               <CheckCircle2 className="h-5 w-5 shrink-0 text-primary mt-0.5" />
@@ -151,10 +146,10 @@ function ProfileForm() {
                 <div className="flex justify-between items-center border border-border-light bg-gray-55/10 rounded-xl p-3.5 text-sm">
                   <span className="font-medium text-secondary-gray">User Authority</span>
                   <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                    user?.role === "ADMIN" ? "bg-red-100 text-red-700" : "bg-primary/10 text-primary"
+                    user?.role === Role.ADMIN ? "bg-red-100 text-red-700" : "bg-primary/10 text-primary"
                   }`}>
-                    {user?.role === "ADMIN" ? <Shield className="h-3 w-3" /> : null}
-                    {user?.role || "STUDENT"}
+                    {user?.role === Role.ADMIN ? <Shield className="h-3 w-3" /> : null}
+                    {user?.role || Role.STUDENT}
                   </span>
                 </div>
 
@@ -193,7 +188,7 @@ function ProfileForm() {
                 />
 
                 {/* Student specific fields */}
-                {user?.role === "STUDENT" && (
+                {user?.role === Role.STUDENT && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-border-light/50 mt-4">
                     <Input
                       label="Degree Course"
@@ -226,7 +221,7 @@ function ProfileForm() {
                 )}
 
                 {/* Admin specific fields */}
-                {user?.role === "ADMIN" && (
+                {user?.role === Role.ADMIN && (
                   <div className="pt-2 border-t border-border-light/50 mt-4">
                     <Input
                       label="Staff Designation"
@@ -264,7 +259,7 @@ function ProfileForm() {
         </div>
       </main>
       <Footer />
-    </>
+    </RouteGuard>
   );
 }
 

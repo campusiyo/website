@@ -8,6 +8,7 @@ import { GraduationCap, ArrowRight, User, Shield, AlertCircle } from "lucide-rea
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
+import { Role, RoleType } from "@/constants/roles";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -19,7 +20,7 @@ declare global {
 
 function RegisterForm() {
   const router = useRouter();
-  const { register, googleLogin } = useAuth();
+  const { user, register, googleLogin } = useAuth();
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -143,37 +144,39 @@ function RegisterForm() {
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
-              {/* Role Selection */}
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-foreground/80">Select Portal Role</label>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setRole("STUDENT")}
-                    className={`flex flex-col items-center gap-2 p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
-                      role === "STUDENT"
-                        ? "border-primary bg-primary/[0.03] text-primary shadow-sm"
-                        : "border-border-light bg-card-bg text-secondary-gray hover:border-gray-300"
-                    }`}
-                  >
-                    <User className="h-5 w-5" />
-                    <span className="text-sm font-semibold">Student Portal</span>
-                  </button>
+              {/* Role Selection — Only available when logged in as an Admin */}
+              {user?.role === Role.ADMIN && (
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-foreground/80">Select Account Role</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setRole(Role.STUDENT)}
+                      className={`flex flex-col items-center gap-2 p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
+                        role === Role.STUDENT
+                          ? "border-primary bg-primary/[0.03] text-primary shadow-sm"
+                          : "border-border-light bg-card-bg text-secondary-gray hover:border-gray-300"
+                      }`}
+                    >
+                      <User className="h-5 w-5" />
+                      <span className="text-sm font-semibold">Student Account</span>
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setRole("ADMIN")}
-                    className={`flex flex-col items-center gap-2 p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
-                      role === "ADMIN"
-                        ? "border-red-500 bg-red-50/10 text-red-600 shadow-sm"
-                        : "border-border-light bg-card-bg text-secondary-gray hover:border-gray-300"
-                    }`}
-                  >
-                    <Shield className="h-5 w-5" />
-                    <span className="text-sm font-semibold">Admin Portal</span>
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => setRole(Role.ADMIN)}
+                      className={`flex flex-col items-center gap-2 p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
+                        role === Role.ADMIN
+                          ? "border-red-500 bg-red-50/10 text-red-600 shadow-sm"
+                          : "border-border-light bg-card-bg text-secondary-gray hover:border-gray-300"
+                      }`}
+                    >
+                      <Shield className="h-5 w-5" />
+                      <span className="text-sm font-semibold">Admin Account</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <Input
                 label="Email Address"

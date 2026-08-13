@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/utils/api";
+import { adminService } from "@/services/adminService";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { BarChart3, BookOpen, Layers, Eye, FolderHeart, UploadCloud, ChevronRight, Settings } from "lucide-react";
+import { BarChart3, BookOpen, Layers, Eye, FolderHeart, UploadCloud, ChevronRight, Settings, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 interface PlatformStats {
@@ -23,7 +23,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await api.get("/admin/dashboard/stats");
+        const res = await adminService.getDashboardStats();
         if (res.ok) {
           const data = await res.json();
           setStats(data);
@@ -261,6 +261,31 @@ export default function AdminDashboard() {
                   onClick={() => router.push("/admin/upload")}
                 >
                   <span>Open Upload Wizard</span>
+                  <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Register New Admin Tool */}
+            <div className="bg-card-bg border border-border-light rounded-xl p-5 shadow-sm flex flex-col justify-between hover:shadow transition-shadow">
+              <div className="space-y-3">
+                <div className="h-9 w-9 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                  <UserPlus className="h-4.5 w-4.5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground">Register New Administrator</h3>
+                  <p className="text-xs text-secondary-gray mt-1 leading-relaxed">
+                    Create a new administrative account with permissions to manage study notes, subjects, courses, and platform content.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-border-light/50">
+                <Button
+                  variant="secondary"
+                  className="w-full justify-center group flex items-center gap-1.5 py-1.5 text-xs cursor-pointer h-8"
+                  onClick={() => router.push("/register?role=ADMIN")}
+                >
+                  <span>Register Admin</span>
                   <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                 </Button>
               </div>

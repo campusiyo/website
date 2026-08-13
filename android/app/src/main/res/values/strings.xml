@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Campusiyo</string>
+    <string name="title_activity_main">Campusiyo</string>
+    <string name="package_name">in.campusiyo.app</string>
+    <string name="custom_url_scheme">in.campusiyo.app</string>
+</resources>

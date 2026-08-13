@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { api } from "@/utils/api";
+import { noteService } from "@/services/noteService";
 
 interface DownloadButtonProps {
   noteId: string;
@@ -18,7 +18,7 @@ export default function DownloadButton({ noteId, documentTitle, isDarkMode }: Do
     if (downloading) return;
     setDownloading(true);
     try {
-      const response = await api.get(`/notes/${noteId}/download`);
+      const response = await noteService.download(noteId);
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);

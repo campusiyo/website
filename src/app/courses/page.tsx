@@ -3,10 +3,14 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { api } from "@/utils/api";
+import { courseService } from "@/services/courseService";
+import { subjectService } from "@/services/subjectService";
+import { noteService } from "@/services/noteService";
+import { Role } from "@/constants/roles";
+import RouteGuard from "@/guards/RouteGuard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Search, BookOpen, Eye, ArrowRight, Library, GraduationCap, ChevronRight, AlertCircle, ShieldAlert } from "lucide-react";
+import { Search, BookOpen, Eye, ArrowRight, Library, GraduationCap, ChevronRight, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 interface Note {
@@ -17,90 +21,6 @@ interface Note {
   subject?: string;
   viewCount: number;
 }
-
-// Static course definitions with semesters mapping to subject names
-const AVAILABLE_COURSES = [
-  {
-    id: "cse",
-    name: "B.Tech Computer Science & Engineering",
-    code: "B.Tech CSE",
-    icon: "💻",
-    subjectsBySemester: {
-      1: ["Calculus & Algebra"],
-      2: [],
-      3: ["Data Structures"],
-      4: ["Operating Systems", "Signal Processing"],
-      5: ["Computer Networks"],
-      6: [],
-      7: [],
-      8: []
-    }
-  },
-  {
-    id: "bcom",
-    name: "Bachelor of Commerce",
-    code: "B.Com",
-    icon: "📈",
-    subjectsBySemester: {
-      1: [],
-      2: ["Macroeconomics"],
-      3: [],
-      4: ["Corporate Finance"],
-      5: [],
-      6: [],
-      7: [],
-      8: []
-    }
-  },
-  {
-    id: "bsc",
-    name: "Bachelor of Science",
-    code: "B.Sc Sciences",
-    icon: "🔬",
-    subjectsBySemester: {
-      1: ["Organic Chemistry", "Calculus & Algebra"],
-      2: [],
-      3: [],
-      4: [],
-      5: [],
-      6: [],
-      7: [],
-      8: []
-    }
-  },
-  {
-    id: "bba",
-    name: "Bachelor of Business Administration",
-    code: "BBA",
-    icon: "💼",
-    subjectsBySemester: {
-      1: [],
-      2: [],
-      3: [],
-      4: [],
-      5: [],
-      6: [],
-      7: [],
-      8: []
-    }
-  },
-  {
-    id: "ba",
-    name: "Bachelor of Arts",
-    code: "B.A. Humanities",
-    icon: "🎨",
-    subjectsBySemester: {
-      1: ["General Psychology"],
-      2: [],
-      3: [],
-      4: [],
-      5: [],
-      6: [],
-      7: [],
-      8: []
-    }
-  }
-];
 
 const getCourseEmoji = (categoryName?: string) => {
   const cat = categoryName?.toLowerCase() || "";
@@ -114,7 +34,7 @@ const getCourseEmoji = (categoryName?: string) => {
 export default function CoursesPage() {
   const router = useRouter();
   const { user, loading, initialized } = useAuth();
-  
+
   const [notes, setNotes] = useState<Note[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
   const [subjects, setSubjects] = useState<any[]>([]);
@@ -127,25 +47,33 @@ export default function CoursesPage() {
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [selectedSemester, setSelectedSemester] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showLoginModal, setShowLoginModal] = useState(false);
 
   // Fetch all published notes, courses, and subjects dynamically
   useEffect(() => {
     if (initialized) {
       const fetchData = async () => {
         try {
-          // 1. Fetch courses
-          const courseRes = await api.get("/courses");
+          // 1. Fetch courses (public)
+          const courseRes = await courseService.list();
           const courseData = courseRes.ok ? await courseRes.json() : [];
           setCourses(courseData);
 
+          // If user is not authenticated, we only fetch public course data
+          if (!user) {
+            if (courseData.length > 0) {
+              setSelectedCourse(courseData[0]);
+              setSelectedSemester(1);
+            }
+            return;
+          }
+
           // 2. Fetch subjects list to map codes
-          const subjectsRes = await api.get("/notes/subjects");
+          const subjectsRes = await subjectService.list();
           const subjectsData = subjectsRes.ok ? await subjectsRes.json() : [];
           setSubjects(subjectsData);
 
           // 3. Fetch notes
-          const notesRes = await api.get("/notes");
+          const notesRes = await noteService.list();
           if (notesRes.ok) {
             const notesData = await notesRes.json();
             setNotes(notesData);
@@ -157,14 +85,14 @@ export default function CoursesPage() {
           if (courseData.length > 0) {
             const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
             const queryCourseId = params ? params.get("courseId") : null;
-            
+
             if (queryCourseId) {
               const matched = courseData.find(
                 (c: any) => c.id === queryCourseId || c.name.toLowerCase() === queryCourseId.toLowerCase()
               );
               if (matched) {
                 setSelectedCourse(matched);
-                setSelectedSemester(1); // always start at Semester 1
+                setSelectedSemester(1);
                 setNotesLoading(false);
                 setCoursesLoading(false);
                 return;
@@ -179,7 +107,6 @@ export default function CoursesPage() {
             } else {
               setSelectedCourse(courseData[0]);
             }
-            // Semester always starts at 1 regardless of which course was auto-selected
             setSelectedSemester(1);
           }
 
@@ -198,43 +125,30 @@ export default function CoursesPage() {
 
   // Fetch subjects dynamically by selected course and semester
   useEffect(() => {
-  if (selectedCourse && selectedSemester) {
-    const fetchSubjectsForCourseAndSem = async () => {
-      try {
-        const res = await api.get(
-          `/notes/subjects/subjects?courseId=${selectedCourse.id}&semester=${selectedSemester}`
-        );
+    if (selectedCourse && selectedSemester && user) {
+      const fetchSubjectsForCourseAndSem = async () => {
+        try {
+          const res = await subjectService.getByCourseSemester(selectedCourse.id, selectedSemester);
 
-        if (res.ok) {
-          const data = await res.json();
-          setActiveSubjects(data || []);
-        } else {
+          if (res.ok) {
+            const data = await res.json();
+            setActiveSubjects(data || []);
+          } else {
+            setActiveSubjects([]);
+          }
+        } catch (err) {
+          console.error("Failed to fetch subjects:", err);
           setActiveSubjects([]);
         }
-      } catch (err) {
-        console.error("Failed to fetch subjects:", err);
-        setActiveSubjects([]);
-      }
-    };
+      };
 
-    fetchSubjectsForCourseAndSem();
-  } else {
-    setActiveSubjects([]);
-  }
-}, [selectedCourse, selectedSemester]);
-
-  // Enforce login for accessing courses page
-  useEffect(() => {
-    if (initialized && !loading && !user) {
-      setShowLoginModal(true);
+      fetchSubjectsForCourseAndSem();
+    } else {
+      setActiveSubjects([]);
     }
-  }, [initialized, loading, user]);
+  }, [selectedCourse, selectedSemester, user]);
 
-  // Semester always starts at 1 when a course is first selected.
-  // The course tab onClick already calls setSelectedSemester(1) on manual switches.
-  // No useEffect needed here — default state handles the initial case.
-
-  // Get active subjects for the current selected course & semester dynamically (with local fallback if API returns empty)
+  // Get active subjects for the current selected course & semester dynamically
   const activeSemesterSubjects = activeSubjects.length > 0
     ? activeSubjects.map((sub: any) => sub.name)
     : selectedCourse
@@ -256,7 +170,7 @@ export default function CoursesPage() {
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    if (!searchQuery.trim()) {
+    if (!searchQuery.trim() || !user) {
       setIsSearching(false);
       setApiNotes([]);
       setDidYouMean(false);
@@ -266,7 +180,7 @@ export default function CoursesPage() {
     const delayDebounceFn = setTimeout(async () => {
       setIsSearching(true);
       try {
-        const res = await api.get(`/notes/search?q=${encodeURIComponent(searchQuery)}`);
+        const res = await noteService.search(searchQuery);
         if (res.ok) {
           const data = await res.json();
           setApiNotes(data.notes || []);
@@ -283,23 +197,20 @@ export default function CoursesPage() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery]);
+  }, [searchQuery, user]);
 
   // Filter notes that belong to the current course + semester subjects
   const notesSource = isSearching ? apiNotes : notes;
 
   const filteredNotes = notesSource.filter((note) => {
     const subName = (note.subjectName || note.subject || "").toLowerCase();
-    
-    // Check if the note belongs to the selected course-semester subjects list
     const matchesSemesterSubject = activeSemesterSubjects.some(
       (sub) => sub.toLowerCase() === subName
     );
-
     return matchesSemesterSubject;
   });
 
-  if (loading || !initialized || notesLoading || coursesLoading) {
+  if (loading || !initialized || (user && (notesLoading || coursesLoading))) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center bg-background">
         <svg className="animate-spin h-10 w-10 text-primary" fill="none" viewBox="0 0 24 24">
@@ -312,11 +223,11 @@ export default function CoursesPage() {
   }
 
   return (
-    <>
+    <RouteGuard access="USER" unauthenticated="overlay">
       <Navbar />
       <main className="flex-grow bg-background py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:space-y-8 space-y-4">
-          
+
           {/* Page Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-border-light sm:pb-6 pb-4">
             <div>
@@ -328,7 +239,7 @@ export default function CoursesPage() {
                 Browse peer-reviewed study files categorized by degrees and semester terms.
               </p>
             </div>
-            {user?.role === "ADMIN" && (
+            {user?.role === Role.ADMIN && (
               <Button
                 variant="accent"
                 size="sm"
@@ -355,7 +266,7 @@ export default function CoursesPage() {
                   key={course.id}
                   onClick={() => {
                     setSelectedCourse(course);
-                    setSelectedSemester(1); // Reset semester choice on course swap
+                    setSelectedSemester(1);
                   }}
                   className={`p-4 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between h-28 cursor-pointer w-full ${
                     isSelected
@@ -377,7 +288,7 @@ export default function CoursesPage() {
 
           {/* Course Layout Split */}
           <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 items-start">
-            
+
             {/* Left Column: Semester Selection */}
             <div className="w-full lg:w-[280px] lg:shrink-0 bg-card-bg border border-border-light rounded-2xl p-4 space-y-3.5">
               <h3 className="font-bold text-foreground text-sm uppercase tracking-wider flex items-center gap-1.5 px-2">
@@ -407,7 +318,7 @@ export default function CoursesPage() {
 
             {/* Right Column: Search + Notes Listing */}
             <div className="flex-grow w-full sm:space-y-6 space-y-4">
-              
+
               {/* Filter / Search Bar */}
               <div className="bg-card-bg border border-border-light rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row gap-4 items-center justify-between">
                 <div className="flex items-center w-full bg-background border border-border-light rounded-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
@@ -488,11 +399,7 @@ export default function CoursesPage() {
                           size="sm"
                           className="w-full justify-center group/btn text-xs font-semibold py-2 bg-card-bg border-border-light hover:bg-primary hover:text-white hover:border-primary cursor-pointer"
                           onClick={() => {
-                            if (!user) {
-                              setShowLoginModal(true);
-                            } else {
-                              router.push(`/notes/${note.id}`);
-                            }
+                            router.push(`/notes/${note.id}`);
                           }}
                         >
                           <span>Open PDF Document</span>
@@ -510,37 +417,6 @@ export default function CoursesPage() {
         </div>
       </main>
       <Footer />
-
-      {showLoginModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
-          <div className="relative bg-card-bg border border-border-light rounded-3xl p-5 sm:p-6 max-w-[360px] w-full text-center shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="mx-auto h-11 w-11 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 border border-primary/20">
-              <ShieldAlert className="h-5 w-5 text-primary" />
-            </div>
-            <h3 className="text-lg font-bold text-foreground">
-              Please Log In
-            </h3>
-            <p className="text-[13px] sm:text-sm text-secondary-gray mt-2 leading-relaxed">
-              To explore courses, subjects, and view study materials, you need to sign in to your Campusiyo account.
-            </p>
-            <div className="mt-5 flex flex-col sm:flex-row gap-2.5">
-              <button
-                onClick={() => router.push("/login")}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer"
-              >
-                Log In
-              </button>
-              <button
-                onClick={() => router.push("/")}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-card-bg border border-border-light hover:bg-gray-50 dark:hover:bg-slate-800 text-foreground text-xs sm:text-sm font-semibold transition-all cursor-pointer"
-              >
-                Go to Homepage
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    </RouteGuard>
   );
 }

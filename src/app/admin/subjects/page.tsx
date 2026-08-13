@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/utils/api";
+import { adminService } from "@/services/adminService";
+import { subjectService } from "@/services/subjectService";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/Input";
@@ -38,7 +39,7 @@ export default function SubjectsCrudPage() {
   const fetchSubjects = async () => {
     try {
       // 1. Fetch courses directory
-      const courseRes = await api.get("/admin/courses");
+      const courseRes = await adminService.getCourses();
       let loadedCourses = [];
       if (courseRes.ok) {
         loadedCourses = await courseRes.json();
@@ -46,7 +47,7 @@ export default function SubjectsCrudPage() {
       }
 
       // 2. Fetch subjects list
-      const res = await api.get("/notes/subjects");
+      const res = await subjectService.list();
       if (res.ok) {
         const data = await res.json();
         setSubjects(data);
@@ -119,30 +120,18 @@ export default function SubjectsCrudPage() {
       return;
     }
 
-    if (!subjectCode.trim()) {
-      setError("Subject Code is required.");
-      setFormLoading(false);
-      return;
-    }
-
-    if (!description.trim()) {
-      setError("Description is required.");
-      setFormLoading(false);
-      return;
-    }
-
     const payload = {
       name: name.trim(),
-      subjectCode: subjectCode.trim(),
-      description: description.trim(),
-      courseId: course,
-      semester: semester ? Number(semester) : undefined,
+      subjectCode: subjectCode.trim() || undefined,
+      description: description.trim() || undefined,
+      courseId: course || undefined,
+      semester: Number(semester),
     };
 
     try {
       if (editingId) {
         // Update subject
-        const res = await api.put(`/notes/subjects/${editingId}`, payload);
+        const res = await adminService.updateSubject(editingId, payload);
         if (res.ok) {
           setSuccess(`Subject "${name}" updated successfully.`);
           handleResetForm();
@@ -153,7 +142,7 @@ export default function SubjectsCrudPage() {
         }
       } else {
         // Create subject
-        const res = await api.post("/notes/subjects", payload);
+        const res = await adminService.createSubject(payload);
         if (res.ok) {
           setSuccess(`Subject "${name}" created successfully.`);
           handleResetForm();
@@ -190,7 +179,7 @@ export default function SubjectsCrudPage() {
     setSuccess(null);
 
     try {
-      const res = await api.delete(`/notes/subjects/${subject.id}`);
+      const res = await adminService.deleteSubject(subject.id);
       if (res.status === 204 || res.ok) {
         setSuccess(`Subject "${subject.name}" deleted successfully.`);
         await fetchSubjects();

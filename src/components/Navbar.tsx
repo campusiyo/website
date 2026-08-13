@@ -5,9 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, LogOut, User as UserIcon, Shield, Bell, Settings, HelpCircle, BookOpen, Clock, Heart, Edit3, ArrowRight, Home, Info, BookMarked, Moon, Sun } from "lucide-react";
+import { Menu, X, LogOut, User as UserIcon, Shield, Bell, Settings, HelpCircle, BookOpen, Clock, Heart, Edit3, ArrowRight, Home, Info, BookMarked, Moon, Sun, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
+import { Role } from "@/constants/roles";
 
 import { LayoutContext } from "@/context/LayoutContext";
 
@@ -199,7 +200,7 @@ export default function Navbar({ isLayout }: { isLayout?: boolean }) {
 
 
   // Dynamic Navbar Items based on User Role
-  const navLinks = user?.role === "ADMIN"
+  const navLinks = user?.role === Role.ADMIN
     ? [
         { href: "/admin", label: "Dashboard" },
         { href: "/admin/courses", label: "Courses" },
@@ -255,7 +256,7 @@ export default function Navbar({ isLayout }: { isLayout?: boolean }) {
                   Campusiyo
                 </span>
               </Link>
-              {mounted && user?.role === "ADMIN" && (
+              {mounted && user?.role === Role.ADMIN && (
                 <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-400">
                   <Shield className="h-3 w-3" />
                   Admin
@@ -285,7 +286,18 @@ export default function Navbar({ isLayout }: { isLayout?: boolean }) {
             </nav>
 
             {/* Desktop Action Items */}
-            <div className="hidden md:flex items-center justify-end gap-4 w-[240px] shrink-0">
+            <div className="hidden md:flex items-center justify-end gap-3 shrink-0">
+              {/* Direct APK Download Button */}
+              <a
+                href="/Campusiyo.apk"
+                download="Campusiyo.apk"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white transition-all cursor-pointer shrink-0 shadow-xs"
+                title="Download Campusiyo Android App"
+              >
+                <Smartphone className="h-3.5 w-3.5" />
+                <span>Get App</span>
+              </a>
+
               {/* Theme Toggle Button */}
               <button
                 onClick={toggleTheme}

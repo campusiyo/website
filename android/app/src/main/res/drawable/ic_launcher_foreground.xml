@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <group
+        android:scaleX="0.65"
+        android:scaleY="0.65"
+        android:pivotX="54"
+        android:pivotY="54">
+        
+        <!-- Outer C Arc Path -->
+        <path
+            android:pathData="M 76,32 A 36,36 0 1 0 76,76"
+            android:strokeWidth="11"
+            android:strokeLineCap="round">
+            <aapt:attr name="android:strokeColor">
+                <gradient
+                    android:startX="0"
+                    android:startY="0"
+                    android:endX="108"
+                    android:endY="108"
+                    android:type="linear">
+                    <item android:offset="0.0" android:color="#FF00A16C" />
+                    <item android:offset="0.6" android:color="#FF00D2FF" />
+                    <item android:offset="1.0" android:color="#FF3B82F6" />
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- Inner Leaf Accent -->
+        <path
+            android:pathData="M 48,42 C 48,42 62,44 68,54 C 74,64 66,74 54,74 C 48,74 44,68 44,62 C 44,52 48,42 48,42 Z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:startX="108"
+                    android:startY="0"
+                    android:endX="0"
+                    android:endY="108"
+                    android:type="linear">
+                    <item android:offset="0.0" android:color="#FF10B981" />
+                    <item android:offset="1.0" android:color="#FF059669" />
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- Accent Dot -->
+        <path
+            android:pathData="M 76,32 m -5.5,0 a 5.5,5.5 0 1,0 11,0 a 5.5,5.5 0 1,0 -11,0"
+            android:fillColor="#FF00D2FF" />
+
+    </group>
+</vector>

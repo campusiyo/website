@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/utils/api";
+import { adminService } from "@/services/adminService";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/Input";
@@ -46,7 +46,7 @@ export default function CoursesCrudPage() {
   const fetchData = async () => {
     try {
       // 1. Fetch categories
-      const catRes = await api.get("/admin/categories");
+      const catRes = await adminService.getCategories();
       let loadedCategories: Category[] = [];
       if (catRes.ok) {
         loadedCategories = await catRes.json();
@@ -57,7 +57,7 @@ export default function CoursesCrudPage() {
       }
 
       // 2. Fetch courses
-      const courseRes = await api.get("/admin/courses");
+      const courseRes = await adminService.getCourses();
       if (courseRes.ok) {
         const courseData = await courseRes.json();
         setCourses(courseData);
@@ -96,12 +96,12 @@ export default function CoursesCrudPage() {
 
   const handleResetForm = () => {
     setName("");
-    if (categories.length > 0) {
-      setCategoryId(categories[0].id);
-    }
     setDescription("");
     setTotalSemesters(8);
     setEditingId(null);
+    if (categories.length > 0) {
+      setCategoryId(categories[0].id);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -117,7 +117,7 @@ export default function CoursesCrudPage() {
     }
 
     if (!categoryId) {
-      setError("Parent Category is required.");
+      setError("Please select a parent Category.");
       setFormLoading(false);
       return;
     }
@@ -138,7 +138,7 @@ export default function CoursesCrudPage() {
     try {
       if (editingId) {
         // Update course
-        const res = await api.put(`/admin/courses/${editingId}`, payload);
+        const res = await adminService.updateCourse(editingId, payload);
         if (res.ok) {
           setSuccess(`Course "${name}" updated successfully.`);
           handleResetForm();
@@ -149,7 +149,7 @@ export default function CoursesCrudPage() {
         }
       } else {
         // Create course
-        const res = await api.post("/admin/courses", payload);
+        const res = await adminService.createCourse(payload);
         if (res.ok) {
           setSuccess(`Course "${name}" created successfully.`);
           handleResetForm();
@@ -185,7 +185,7 @@ export default function CoursesCrudPage() {
     setSuccess(null);
 
     try {
-      const res = await api.delete(`/admin/courses/${course.id}`);
+      const res = await adminService.deleteCourse(course.id);
       if (res.status === 204 || res.ok) {
         setSuccess(`Course "${course.name}" deleted successfully.`);
         await fetchData();

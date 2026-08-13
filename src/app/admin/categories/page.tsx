@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/utils/api";
+import { adminService } from "@/services/adminService";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/Input";
@@ -32,7 +32,7 @@ export default function CategoriesCrudPage() {
 
   const fetchCategories = async () => {
     try {
-      const res = await api.get("/admin/categories");
+      const res = await adminService.getCategories();
       if (res.ok) {
         const data = await res.json();
         setCategories(data);
@@ -97,7 +97,7 @@ export default function CategoriesCrudPage() {
     try {
       if (editingId) {
         // Update category
-        const res = await api.put(`/admin/categories/${editingId}`, payload);
+        const res = await adminService.updateCategory(editingId, payload);
         if (res.ok) {
           setSuccess(`Category "${name}" updated successfully.`);
           handleResetForm();
@@ -108,7 +108,7 @@ export default function CategoriesCrudPage() {
         }
       } else {
         // Create category
-        const res = await api.post("/admin/categories", payload);
+        const res = await adminService.createCategory(payload);
         if (res.ok) {
           setSuccess(`Category "${name}" created successfully.`);
           handleResetForm();
@@ -143,7 +143,7 @@ export default function CategoriesCrudPage() {
     setSuccess(null);
 
     try {
-      const res = await api.delete(`/admin/categories/${category.id}`);
+      const res = await adminService.deleteCategory(category.id);
       if (res.status === 204 || res.ok) {
         setSuccess(`Category "${category.name}" deleted successfully.`);
         await fetchCategories();

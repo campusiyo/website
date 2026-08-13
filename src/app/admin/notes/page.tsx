@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/utils/api";
+import { noteService } from "@/services/noteService";
+import { adminService } from "@/services/adminService";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/Button";
@@ -26,7 +27,7 @@ export default function NotesManagementPage() {
 
   const fetchNotes = async () => {
     try {
-      const res = await api.get("/notes");
+      const res = await noteService.list();
       if (res.ok) {
         const data = await res.json();
         setNotes(data || []);
@@ -71,7 +72,7 @@ export default function NotesManagementPage() {
     setSuccess(null);
 
     try {
-      const res = await api.delete(`/notes/${note.id}`);
+      const res = await adminService.deleteNote(note.id);
       if (res.status === 204 || res.ok) {
         setSuccess(`Note "${note.title}" deleted successfully.`);
         await fetchNotes();
@@ -99,7 +100,7 @@ export default function NotesManagementPage() {
     const delayDebounceFn = setTimeout(async () => {
       setIsSearching(true);
       try {
-        const res = await api.get(`/notes/search?q=${encodeURIComponent(searchQuery)}`);
+        const res = await noteService.search(searchQuery);
         if (res.ok) {
           const data = await res.json();
           setApiNotes(data.notes || []);

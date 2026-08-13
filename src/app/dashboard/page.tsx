@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { api } from "@/utils/api";
+import { dashboardService } from "@/services/dashboardService";
+import { Role } from "@/constants/roles";
+import RouteGuard from "@/guards/RouteGuard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { BookOpen, User, AlertCircle, ArrowRight, Compass, Settings } from "lucide-react";
+import { BookOpen, User, AlertCircle, ArrowRight, Compass } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 interface DashboardData {
@@ -24,22 +26,15 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (initialized && !loading) {
-      if (!user) {
-        router.push("/login");
-        return;
-      }
-      
-      // If admin, redirect directly to admin workspace
-      if (user.role === "ADMIN") {
+    if (initialized && !loading && user) {
+      if (user.role === Role.ADMIN) {
         router.push("/admin");
         return;
       }
 
-      // Fetch student dashboard message
       const fetchDashboard = async () => {
         try {
-          const res = await api.get("/users/dashboard");
+          const res = await dashboardService.getDashboard();
           if (res.ok) {
             const data = await res.json();
             setDashData(data);
@@ -57,7 +52,7 @@ export default function DashboardPage() {
     }
   }, [user, loading, initialized, router]);
 
-  if (loading || !initialized || (user && user.role === "ADMIN") || (dashLoading && !error)) {
+  if (loading || !initialized || (user && user.role === Role.ADMIN) || (dashLoading && !error)) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center bg-background">
         <svg className="animate-spin h-10 w-10 text-primary" fill="none" viewBox="0 0 24 24">
@@ -70,11 +65,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <>
+    <RouteGuard access="USER" unauthenticated="redirect">
       <Navbar />
       <main className="flex-grow bg-background py-10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          
+
           {/* Welcome Banner */}
           <div className="bg-card-bg border border-border-light rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
@@ -116,7 +111,7 @@ export default function DashboardPage() {
 
           {/* Quick Actions Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
+
             {/* Notes Portal Card */}
             <div className="bg-card-bg border border-border-light rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
               <div className="space-y-4">
@@ -182,6 +177,6 @@ export default function DashboardPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </RouteGuard>
   );
 }

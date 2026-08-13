@@ -166,6 +166,11 @@ export default function Footer({ isLayout }: { isLayout?: boolean }) {
                 </Link>
               </li>
               <li>
+                <a href="/Campusiyo.apk" download="Campusiyo.apk" className="text-sm font-semibold text-primary hover:underline transition-colors">
+                  Android App (.APK)
+                </a>
+              </li>
+              <li>
                 <Link href="/coming-soon" className="text-sm text-secondary-gray hover:text-primary transition-colors">
                   Contribute Notes
                 </Link>

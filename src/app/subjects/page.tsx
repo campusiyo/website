@@ -3,10 +3,14 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { api } from "@/utils/api";
+import { courseService } from "@/services/courseService";
+import { subjectService } from "@/services/subjectService";
+import { noteService } from "@/services/noteService";
+import { Role } from "@/constants/roles";
+import RouteGuard from "@/guards/RouteGuard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { BookOpen, Search, ArrowRight, BookMarked, Eye, ChevronDown, ChevronUp, AlertCircle, ShieldAlert } from "lucide-react";
+import { BookOpen, Search, ArrowRight, BookMarked, Eye, ChevronDown, ChevronUp, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 interface Note {
@@ -24,10 +28,9 @@ interface SubjectInfo {
   courseId?: string;
   courseName?: string;
   notes: Note[];
-  isOpen?: boolean; // For expanding notes in-place
+  isOpen?: boolean;
 }
 
-// Static metadata fallback for codes
 const SUBJECT_METADATA: Record<string, string> = {
   "data structures": "CS-301",
   "macroeconomics": "EC-202",
@@ -37,7 +40,7 @@ const SUBJECT_METADATA: Record<string, string> = {
   "corporate finance": "FI-401",
   "signal processing": "EE-304",
   "general psychology": "PY-101",
-  "computer networks": "CS-303"
+  "computer networks": "CS-303",
 };
 
 export default function SubjectsPage() {
@@ -46,14 +49,6 @@ export default function SubjectsPage() {
 
   const [subjects, setSubjects] = useState<SubjectInfo[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-
-  // Enforce login for accessing subjects page
-  useEffect(() => {
-    if (initialized && !loading && !user) {
-      setShowLoginModal(true);
-    }
-  }, [initialized, loading, user]);
   const [subjectsLoading, setSubjectsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -74,10 +69,15 @@ export default function SubjectsPage() {
     if (initialized) {
       const fetchAndAggregate = async () => {
         try {
-          // 1. Fetch all courses to map IDs to names
-          const courseRes = await api.get("/courses");
+          // 1. Fetch courses
+          const courseRes = await courseService.list();
           const courseData = courseRes.ok ? await courseRes.json() : [];
           setCourses(courseData);
+
+          if (!user) {
+            setSubjectsLoading(false);
+            return;
+          }
 
           const courseNameMap: Record<string, string> = {};
           courseData.forEach((c: any) => {
@@ -87,7 +87,7 @@ export default function SubjectsPage() {
           });
 
           // 2. Fetch registered subjects to map names to official subjectCodes and courseIds
-          const subjectsRes = await api.get("/notes/subjects");
+          const subjectsRes = await subjectService.list();
           const subjectsData = subjectsRes.ok ? await subjectsRes.json() : [];
           const codeMap: Record<string, string> = {};
           const subjectCourseIdMap: Record<string, string> = {};
@@ -104,11 +104,10 @@ export default function SubjectsPage() {
           });
 
           // 3. Fetch notes
-          const res = await api.get("/notes");
+          const res = await noteService.list();
           if (res.ok) {
             const data: Note[] = await res.json();
-            
-            // Map to aggregate unique subjects with their respective notes
+
             const subjectMap: Record<string, Note[]> = {};
             data.forEach((note) => {
               const subName = note.subjectName || note.subject || "General Study Guide";
@@ -118,10 +117,8 @@ export default function SubjectsPage() {
               subjectMap[subName].push(note);
             });
 
-            // Read search param to auto-expand
             const searchParam = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("search")?.toLowerCase() : "";
 
-            // Format into list
             const list: SubjectInfo[] = Object.keys(subjectMap).map((subName) => {
               const courseId = subjectCourseIdMap[subName.toLowerCase()] || "";
               const courseName = courseId ? (courseNameMap[courseId.toLowerCase()] || "") : "";
@@ -134,7 +131,7 @@ export default function SubjectsPage() {
                 isOpen: searchParam ? (
                   subName.toLowerCase().includes(searchParam) ||
                   courseName.toLowerCase().includes(searchParam)
-                ) : false
+                ) : false,
               };
             });
 
@@ -143,7 +140,7 @@ export default function SubjectsPage() {
             setError("Failed to fetch subjects library.");
           }
         } catch (err) {
-          console.log(err)
+          console.error("[Subjects] Fetch error:", err);
           setError("Gateway connectivity error.");
         } finally {
           setSubjectsLoading(false);
@@ -177,7 +174,7 @@ export default function SubjectsPage() {
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    if (!searchQuery.trim()) {
+    if (!searchQuery.trim() || !user) {
       setIsSearching(false);
       setApiSubjects([]);
       setDidYouMean(false);
@@ -187,11 +184,11 @@ export default function SubjectsPage() {
     const delayDebounceFn = setTimeout(async () => {
       setIsSearching(true);
       try {
-        const res = await api.get(`/notes/search?q=${encodeURIComponent(searchQuery)}`);
+        const res = await noteService.search(searchQuery);
         if (res.ok) {
           const data = await res.json();
           const subjectsData = data.subjects || [];
-          
+
           const courseNameMap: Record<string, string> = {};
           courses.forEach((c: any) => {
             if (c.id && c.name) {
@@ -201,7 +198,7 @@ export default function SubjectsPage() {
 
           const list: SubjectInfo[] = subjectsData.map((sub: any) => {
             const courseName = sub.courseId ? (courseNameMap[sub.courseId.toLowerCase()] || "") : "";
-            const subNotes = (data.notes || []).filter((note: any) => 
+            const subNotes = (data.notes || []).filter((note: any) =>
               (note.subjectName && note.subjectName.toLowerCase() === sub.name.toLowerCase()) ||
               (note.subject && note.subject.toLowerCase() === sub.name.toLowerCase())
             );
@@ -211,7 +208,7 @@ export default function SubjectsPage() {
               courseId: sub.courseId,
               courseName: courseName,
               notes: subNotes,
-              isOpen: true
+              isOpen: true,
             };
           });
 
@@ -229,11 +226,11 @@ export default function SubjectsPage() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, courses]);
+  }, [searchQuery, courses, user]);
 
   const displayedSubjects = isSearching ? apiSubjects : filteredSubjects;
 
-  if (loading || !initialized || (subjectsLoading && subjects.length === 0)) {
+  if (loading || !initialized || (user && subjectsLoading && subjects.length === 0)) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center bg-background">
         <svg className="animate-spin h-10 w-10 text-primary" fill="none" viewBox="0 0 24 24">
@@ -246,11 +243,11 @@ export default function SubjectsPage() {
   }
 
   return (
-    <>
+    <RouteGuard access="USER" unauthenticated="overlay">
       <Navbar />
       <main className="flex-grow bg-background sm:py-8 py-4">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 sm:space-y-8 space-y-6">
-          
+
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-border-light pb-4 sm:pb-6">
             <div>
@@ -262,7 +259,7 @@ export default function SubjectsPage() {
                 Explore course syllabuses and select notes directly by curriculum module.
               </p>
             </div>
-            {user?.role === "ADMIN" && (
+            {user?.role === Role.ADMIN && (
               <Button
                 variant="accent"
                 size="sm"
@@ -337,7 +334,7 @@ export default function SubjectsPage() {
                         )}
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-4 shrink-0">
                       <span className="text-xs text-secondary-gray font-semibold bg-background border border-border-light px-2.5 py-1 rounded-full">
                         {sub.notes.length} {sub.notes.length === 1 ? "note" : "notes"}
@@ -407,37 +404,6 @@ export default function SubjectsPage() {
         </div>
       </main>
       <Footer />
-
-      {showLoginModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
-          <div className="relative bg-card-bg border border-border-light rounded-3xl p-5 sm:p-6 max-w-[360px] w-full text-center shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="mx-auto h-11 w-11 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 border border-primary/20">
-              <ShieldAlert className="h-5 w-5 text-primary" />
-            </div>
-            <h3 className="text-lg font-bold text-foreground">
-              Please Log In
-            </h3>
-            <p className="text-[13px] sm:text-sm text-secondary-gray mt-2 leading-relaxed">
-              To explore courses, subjects, and view study materials, you need to sign in to your Campusiyo account.
-            </p>
-            <div className="mt-5 flex flex-col sm:flex-row gap-2.5">
-              <button
-                onClick={() => router.push("/login")}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer"
-              >
-                Log In
-              </button>
-              <button
-                onClick={() => router.push("/")}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-card-bg border border-border-light hover:bg-gray-50 dark:hover:bg-slate-800 text-foreground text-xs sm:text-sm font-semibold transition-all cursor-pointer"
-              >
-                Go to Homepage
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    </RouteGuard>
   );
 }

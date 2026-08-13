@@ -29,11 +29,16 @@ import {
   AlertCircle,
   MessageSquare,
   Compass,
-  ArrowRightLeft
+  ArrowRightLeft,
+  Smartphone
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { api } from "@/utils/api";
+import { useAuth } from "@/context/AuthContext";
+import LoginRequiredOverlay from "@/components/LoginRequiredOverlay";
+import { subjectService } from "@/services/subjectService";
+import { courseService } from "@/services/courseService";
+import { noteService } from "@/services/noteService";
 
 // FAQ items for SEO Content
 const FAQ_ITEMS = [
@@ -87,10 +92,33 @@ const getCourseStyle = (categoryName?: string) => {
 
 export default function Home() {
   const router = useRouter();
+  const { user } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [didYouMean, setDidYouMean] = useState(false);
+
+  const handleSearchFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!user) {
+      e.target.blur();
+      setShowLoginModal(true);
+    }
+  };
+
+  const handleSearchClick = () => {
+    if (!user) {
+      setShowLoginModal(true);
+    }
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+    setSearchQuery(e.target.value);
+  };
 
   const [waitlistEmail, setWaitlistEmail] = useState("");
   const [waitlistLoading, setWaitlistLoading] = useState(false);
@@ -120,7 +148,7 @@ export default function Home() {
       setIsLoadingSubjects(true);
       setSubjectError(null);
       try {
-        const res = await api.get("/notes/subjects/popular");
+        const res = await subjectService.popular();
         if (res.ok) {
           const data = await res.json();
           setPopularSubjects(data || []);
@@ -142,7 +170,7 @@ export default function Home() {
       setIsLoadingCourses(true);
       setCoursesError(null);
       try {
-        const res = await api.get("/courses/top");
+        const res = await courseService.getTop();
         if (res.ok) {
           const data = await res.json();
           setCourses(data || []);
@@ -170,7 +198,7 @@ export default function Home() {
     const delayDebounceFn = setTimeout(async () => {
       setIsSearching(true);
       try {
-        const res = await api.get(`/notes/search?q=${encodeURIComponent(searchQuery)}`);
+        const res = await noteService.search(searchQuery);
         if (res.ok) {
           const data = await res.json();
           setSearchResults(data.notes || []);
@@ -259,8 +287,10 @@ export default function Home() {
                   type="text"
                   placeholder="Search 10+ subject notes and pyq's..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-10 pl-3 pr-12 bg-transparent border-0 rounded-lg text-sm text-foreground placeholder:text-foreground/45 outline-none focus:ring-0"
+                  onFocus={handleSearchFocus}
+                  onClick={handleSearchClick}
+                  onChange={handleSearchChange}
+                  className="w-full h-10 pl-3 pr-12 bg-transparent border-0 rounded-lg text-sm text-foreground placeholder:text-foreground/45 outline-none focus:ring-0 cursor-pointer"
                   suppressHydrationWarning
                 />
                 {searchQuery && (
@@ -272,6 +302,19 @@ export default function Home() {
                   </button>
                 )}
               </div>
+            </div>
+
+            {/* Direct Android APK Download Button */}
+            <div className="pt-2 flex justify-center">
+              <a
+                href="/Campusiyo.apk"
+                download="Campusiyo.apk"
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-card-bg/90 border border-border-light hover:border-primary/40 text-xs font-semibold text-foreground hover:text-primary shadow-xs transition-all cursor-pointer group"
+              >
+                <Smartphone className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
+                <span>Download official <strong>Campusiyo Android App (.APK)</strong></span>
+                <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">Target SDK 35</span>
+              </a>
             </div>
           </div>
         </section>
@@ -947,6 +990,10 @@ export default function Home() {
 
       {/* 14. Footer */}
       <Footer />
+
+      {showLoginModal && (
+        <LoginRequiredOverlay onClose={() => setShowLoginModal(false)} />
+      )}
     </>
   );
 }

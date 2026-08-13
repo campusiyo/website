@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Outer C Arc Path with Brand Gradient -->
+    <path
+        android:pathData="M 72,28 A 36,36 0 1 0 72,72"
+        android:strokeWidth="11"
+        android:strokeLineCap="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="0"
+                android:startY="0"
+                android:endX="100"
+                android:endY="100"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF00A16C" />
+                <item android:offset="0.6" android:color="#FF00D2FF" />
+                <item android:offset="1.0" android:color="#FF3B82F6" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Inner Curriculum Leaf Accent -->
+    <path
+        android:pathData="M 44,38 C 44,38 58,40 64,50 C 70,60 62,70 50,70 C 44,70 40,64 40,58 C 40,48 44,38 44,38 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="100"
+                android:startY="0"
+                android:endX="0"
+                android:endY="100"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF10B981" />
+                <item android:offset="1.0" android:color="#FF059669" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Dot Accent -->
+    <path
+        android:pathData="M 72,28 m -5.5,0 a 5.5,5.5 0 1,0 11,0 a 5.5,5.5 0 1,0 -11,0"
+        android:fillColor="#FF00D2FF" />
+
+</vector>

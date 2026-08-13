@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/utils/api";
+import { subjectService } from "@/services/subjectService";
+import { adminService } from "@/services/adminService";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/Input";
@@ -36,7 +37,7 @@ export default function NoteUploadPage() {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const res = await api.get("/notes/subjects");
+        const res = await subjectService.list();
         if (res.ok) {
           const data = await res.json();
           setSubjects(data);
@@ -75,7 +76,6 @@ export default function NoteUploadPage() {
       const droppedFile = e.dataTransfer.files[0];
       if (droppedFile.type === "application/pdf") {
         setFile(droppedFile);
-        setError(null);
       } else {
         setError("Only PDF files are supported.");
       }
@@ -87,7 +87,6 @@ export default function NoteUploadPage() {
       const selectedFile = e.target.files[0];
       if (selectedFile.type === "application/pdf") {
         setFile(selectedFile);
-        setError(null);
       } else {
         setError("Only PDF files are supported.");
       }
@@ -106,7 +105,7 @@ export default function NoteUploadPage() {
     setSuccess(null);
 
     if (!title.trim()) {
-      setError("Note Title is required.");
+      setError("Title is required.");
       return;
     }
 
@@ -130,7 +129,7 @@ export default function NoteUploadPage() {
     formData.append("file", file);
 
     try {
-      const res = await api.post("/notes", formData);
+      const res = await adminService.createNote(formData);
       if (res.ok) {
         setSuccess("Study note PDF uploaded and published successfully.");
         setTitle("");
