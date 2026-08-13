@@ -71,19 +71,28 @@ function RegisterForm() {
     }
   };
 
+  const triggerGoogleOAuthFallback = () => {
+    if (typeof window === "undefined") return;
+    const clientID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "1087453987123-campusiyo.apps.googleusercontent.com";
+    const redirectUri = window.location.origin + "/login";
+    const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientID)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=id_token&scope=openid%20email%20profile&nonce=${Date.now()}`;
+    window.location.href = oauthUrl;
+  };
+
   const handleCustomGoogleSignUp = () => {
     if (typeof window !== "undefined" && window.google?.accounts?.id) {
       try {
         window.google.accounts.id.prompt((notification: any) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            console.log("GIS Prompt status:", notification.getNotDisplayedReason() || notification.getSkippedReason());
+            triggerGoogleOAuthFallback();
           }
         });
       } catch (e) {
         console.error("Google Sign-In prompt error:", e);
+        triggerGoogleOAuthFallback();
       }
     } else {
-      setError("Google Sign-In is loading. Please check your internet connection or try again in a moment.");
+      triggerGoogleOAuthFallback();
     }
   };
 
