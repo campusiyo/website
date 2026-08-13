@@ -133,8 +133,8 @@ function RegisterForm() {
       />
       
       <Navbar />
-      <main className="flex-grow flex items-center justify-center bg-background px-4 py-16 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8 bg-card-bg p-8 rounded-2xl border border-border-light shadow-xl transition-all duration-300 hover:shadow-2xl">
+      <main className="flex-grow flex items-center justify-center bg-background px-4 sm:px-6 lg:px-8 py-10 sm:py-16 w-full">
+        <div className="w-full max-w-md mx-auto space-y-8 bg-card-bg p-6 sm:p-8 rounded-2xl border border-border-light shadow-xl transition-all duration-300 hover:shadow-2xl">
           <div className="text-center">
             <div className="mx-auto h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
               <GraduationCap className="h-8 w-8" />

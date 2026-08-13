@@ -19,19 +19,17 @@ export default function SplashScreen({
   useEffect(() => {
     if (!autoDismiss) return;
 
-    // Timeline overview:
-    // 0.0 - 0.3s: Background + Ambient Glow
-    // 0.3 - 0.9s: Logo arc reveal & draw
-    // 0.9 - 1.3s: Logo settles to 100% scale
-    // 1.1 - 1.6s: "Campusiyo" text slide + fade in
-    // 1.6 - 1.9s: Subtle glow pulse
-    // 2.2s: Auto dismiss transition out
+    // Timeline overview (1.2s optimal startup duration):
+    // 0.0 - 0.2s: Background + Ambient Glow
+    // 0.2 - 0.6s: Logo arc reveal & draw
+    // 0.6 - 0.9s: "Campusiyo" text slide + fade in
+    // 1.0 - 1.2s: Smooth fade-out transition
     const timer = setTimeout(() => {
       setIsVisible(false);
       if (onComplete) {
-        setTimeout(onComplete, 400); // 400ms fade-out buffer
+        setTimeout(onComplete, 200); // 200ms fade-out buffer
       }
-    }, 2200);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [autoDismiss, onComplete]);
@@ -115,7 +113,7 @@ export default function SplashScreen({
                   </filter>
                 </defs>
 
-                {/* Outer Smooth Circular "C" Arc Draw Path (0.3s - 0.9s) */}
+                {/* Outer Smooth Circular "C" Arc Draw Path (0.15s - 0.6s) */}
                 <motion.path
                   d="M 72,28 A 36,36 0 1 0 72,72"
                   fill="none"
@@ -125,8 +123,8 @@ export default function SplashScreen({
                   initial={{ pathLength: 0, opacity: 0 }}
                   animate={{ pathLength: 1, opacity: 1 }}
                   transition={{
-                    pathLength: { duration: 0.65, delay: 0.3, ease: [0.25, 1, 0.5, 1] },
-                    opacity: { duration: 0.15, delay: 0.3 },
+                    pathLength: { duration: 0.45, delay: 0.15, ease: [0.25, 1, 0.5, 1] },
+                    opacity: { duration: 0.1, delay: 0.15 },
                   }}
                 />
 
@@ -137,8 +135,8 @@ export default function SplashScreen({
                   initial={{ scale: 0.5, opacity: 0 }}
                   animate={{ scale: 1, opacity: 0.95 }}
                   transition={{
-                    duration: 0.5,
-                    delay: 0.65,
+                    duration: 0.35,
+                    delay: 0.45,
                     ease: [0.34, 1.56, 0.64, 1], // subtle spring pop
                   }}
                 />
@@ -152,22 +150,22 @@ export default function SplashScreen({
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{
-                    duration: 0.3,
-                    delay: 0.85,
+                    duration: 0.25,
+                    delay: 0.6,
                     ease: "backOut",
                   }}
                 />
               </svg>
             </motion.div>
 
-            {/* "Campusiyo" Typography + Tagline (1.1s - 1.6s) */}
+            {/* "Campusiyo" Typography + Tagline (0.6s - 0.9s) */}
             <div className="mt-6 flex flex-col items-center text-center">
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
-                  duration: 0.5,
-                  delay: 1.1,
+                  duration: 0.35,
+                  delay: 0.6,
                   ease: [0.16, 1, 0.3, 1],
                 }}
                 className="flex items-center gap-1"
@@ -181,8 +179,8 @@ export default function SplashScreen({
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 0.65, y: 0 }}
                 transition={{
-                  duration: 0.4,
-                  delay: 1.3,
+                  duration: 0.35,
+                  delay: 0.75,
                   ease: [0.16, 1, 0.3, 1],
                 }}
                 className="mt-1.5 text-[10px] sm:text-xs font-semibold tracking-[0.2em] text-gray-300 uppercase"

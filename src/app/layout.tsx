@@ -125,8 +125,10 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
         <style dangerouslySetInnerHTML={{ __html: `
-          html {
-            scrollbar-gutter: stable;
+          @media (min-width: 1024px) {
+            html {
+              scrollbar-gutter: stable;
+            }
           }
           html, body {
             background-color: #13151C;
