@@ -55,6 +55,11 @@
   --color-sidebar-bg: var(--sidebar-bg);
 }
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
@@ -80,36 +85,48 @@ input[type="password"],
 input[type="search"],
 select,
 textarea {
-  font-size: 0.875rem !important; /* 14px text-sm */
-  line-height: 1.25rem !important;
-  border-radius: 0.5rem !important; /* 8px rounded-lg */
+  font-size: 0.875rem; /* 14px text-sm */
+  line-height: 1.25rem;
+  border-radius: 0.5rem; /* 8px rounded-lg */
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
-  transition: all 0.2s ease-in-out !important;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Prevent iOS Safari viewport auto-zoom on form inputs */
+@media (max-width: 640px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 1rem !important; /* 16px font-size prevents iOS browser viewport zoom */
+  }
 }
 
 /* Interactive tables polish */
 table {
-  border-collapse: collapse !important;
-  table-layout: fixed !important;
+  border-collapse: collapse;
+  width: 100%;
 }
 th {
-  font-weight: 700 !important;
-  letter-spacing: 0.05em !important;
-  color: var(--secondary-gray) !important;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--secondary-gray);
 }
 tr {
-  transition: background-color 0.15s ease-in-out !important;
+  transition: background-color 0.15s ease-in-out;
 }
 
 /* Focus and hover outline refinements */
 a, button, select, input, textarea {
-  outline: none !important;
+  outline: none;
 }
 a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
-  ring: 2px !important;
-  ring-offset: 2px !important;
-  ring-color: var(--primary) !important;
+  ring: 2px;
+  ring-offset: 2px;
+  ring-color: var(--primary);
 }

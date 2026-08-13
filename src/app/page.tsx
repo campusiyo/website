@@ -251,8 +251,8 @@ export default function Home() {
 
       <main className="flex-grow">
         
-        {/* 2. Hero Section (Height is half of the screen, i.e., 50vh, and search bar centered inside it) */}
-        <section className="relative overflow-hidden bg-background flex flex-col items-center justify-center h-[35vh] min-h-[150px] sm:h-[50vh] sm:min-h-[400px]">
+        {/* 2. Hero Section */}
+        <section className="relative overflow-hidden bg-background flex flex-col items-center justify-center py-10 sm:py-16 sm:h-[50vh] sm:min-h-[400px]">
           {/* Background image under hero with low opacity */}
           <div className="absolute inset-0 -z-10 w-full h-full">
             <Image
@@ -266,7 +266,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/70 to-background" />
           </div>
 
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 w-full">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-5 sm:space-y-6 w-full">
             {/* Tagline */}
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/5 text-primary text-xs font-semibold border border-primary/10 tracking-wide">
               <span>Classroom Notes Sorted Semester-Wise</span>
@@ -280,7 +280,7 @@ export default function Home() {
             </h1>
 
             {/* Subtitle / Centered Notes Bar */}
-            <div className="relative max-w-xl mx-auto pt-2 w-full">
+            <div className="relative max-w-xl mx-auto pt-1 sm:pt-2 w-full">
               <div className="relative flex items-center shadow-sm rounded-lg bg-card-bg border border-border-light focus-within:border-primary transition-all">
                 <SearchIcon className="ml-4 h-4 w-4 shrink-0 text-secondary-gray/80 pointer-events-none" />
                 <input
@@ -305,15 +305,15 @@ export default function Home() {
             </div>
 
             {/* Direct Android APK Download Button */}
-            <div className="pt-2 flex justify-center">
+            <div className="pt-1 sm:pt-2 flex justify-center">
               <a
                 href="/Campusiyo.apk"
                 download="Campusiyo.apk"
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-card-bg/90 border border-border-light hover:border-primary/40 text-xs font-semibold text-foreground hover:text-primary shadow-xs transition-all cursor-pointer group"
+                className="inline-flex flex-wrap items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-full bg-card-bg/90 border border-border-light hover:border-primary/40 text-xs font-semibold text-foreground hover:text-primary shadow-xs transition-all cursor-pointer group max-w-full text-center"
               >
-                <Smartphone className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
-                <span>Download official <strong>Campusiyo Android App (.APK)</strong></span>
-                <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">Target SDK 35</span>
+                <Smartphone className="h-4 w-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
+                <span>Campusiyo Android App (.APK)</span>
+                <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0">Target SDK 35</span>
               </a>
             </div>
           </div>
