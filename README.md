@@ -516,7 +516,7 @@ Examples:
 
 ### Additional Practices
 - `X-Powered-By` header removed (`poweredByHeader: false`)
-- Admin routes protected by server-side auth check in `admin/layout.tsx`
+- Admin routes protected by server-side authentication check in `admin/layout.tsx`
 - PDF content protected with HTML watermark overlay + focus/blur blur screen
 - JWT tokens stored in `localStorage` (not cookies) to prevent CSRF
 - All external links use `rel="noopener noreferrer"`
